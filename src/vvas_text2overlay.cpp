@@ -193,8 +193,8 @@ extern "C"
         kpriv->total_defect++;
     }
 
-    LOG_MESSAGE (LOG_LEVEL_DEBUG, "Defect Density: %.2lf %%", defect_density);
-    sprintf(text_buffer, "Defect Density: %.2lf %%", defect_density);
+    LOG_MESSAGE (LOG_LEVEL_DEBUG, "Defect Dense: %.2lf %%", defect_density);
+    sprintf(text_buffer, "Defect Dense: %.2lf %%", defect_density);
     LOG_MESSAGE (LOG_LEVEL_DEBUG, "text buffer : %s", text_buffer);
     // Scalar(Blue, Green, Red, Alpha) 
     // This example draws Opaque White text
