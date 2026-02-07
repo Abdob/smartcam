@@ -51,7 +51,7 @@ inject_metadata_probe(GstPad *pad, GstPadProbeInfo *info, gpointer user_data) {
 
 int main(int argc, char *argv[]) {
 
-    printf("Stuff got eliminated\n");
+    printf("Buildling\n");
     GstElement *pipeline;
     GstBus *bus;
     GstMessage *msg;
@@ -63,7 +63,10 @@ int main(int argc, char *argv[]) {
     const char* pipeline_cmd = 
         "v4l2src device=/dev/video0 io-mode=mmap ! h264parse ! video/x-h264,alignment=au ! "
         "queue ! omxh264dec low-latency=true ! "
-        "video/x-raw, width=1280, height=720, format=NV12 ! "
+        "video/x-raw, width=1920, height=1080, format=NV12 ! "
+	    "queue ! "
+        "vvas_xmultisrc kconfig=\"/opt/xilinx/kv260-smartcam/share/vvas/facedetect/resize.json\" ! \ "
+	    "video/x-raw, width=1280, height=720, format=BGR ! \ "
         "queue name=source0 ! "
         "vvas_xfilter name=text2overlay kernels-config=\"/opt/xilinx/kv260-smartcam/share/vvas/text2overlay.json\" ! "
         "queue ! "

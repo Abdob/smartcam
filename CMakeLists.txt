@@ -74,14 +74,6 @@ target_link_libraries(${CMAKE_PROJECT_NAME}
 install(TARGETS ${CMAKE_PROJECT_NAME} DESTINATION ${INSTALL_PATH}/bin)
 
 
-install(PROGRAMS
-    script/01.mipi-rtsp.sh
-    script/02.mipi-dp.sh
-    script/03.file-file.sh
-    script/04.file-ssd-dp.sh
-    script/smartcam-install.py
-    DESTINATION ${INSTALL_PATH}/bin)
-
 install(FILES
     README
     DESTINATION ${INSTALL_PATH}/
