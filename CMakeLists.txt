@@ -1,40 +1,29 @@
-#
-# Copyright 2019 Xilinx Inc.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-#
-
 cmake_minimum_required(VERSION 3.5)
-
 project(smartcam)
 
 SET(CMAKE_INSTALL_PREFIX $ENV{OECORE_TARGET_SYSROOT})
-
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-narrowing -fpermissive -rdynamic -Wl,--no-undefined" )
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread -std=c++14")
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
+
+# 1. Find Packages
 find_package(GStreamer REQUIRED)
 find_package(OpenCV REQUIRED)
+find_package(PkgConfig REQUIRED)
+
+# 2. Specifically look for XRT using PkgConfig
+pkg_check_modules(XRT REQUIRED IMPORTED_TARGET xrt)
 
 SET(INSTALL_PATH "opt/xilinx/kv260-smartcam")
 
+# --- vvas_xpp ---
 add_library(vvas_xpp SHARED src/vvas_xpp_pipeline.c)
 target_include_directories(vvas_xpp PRIVATE ${GSTREAMER_INCLUDE_DIRS})
-target_link_libraries(vvas_xpp
-  jansson vvasutil-2.0 gstvvasinfermeta-2.0)
+target_link_libraries(vvas_xpp jansson vvasutil-2.0 gstvvasinfermeta-2.0)
 install(TARGETS vvas_xpp DESTINATION ${INSTALL_PATH}/lib)
 
+# --- vvas_airender ---
 add_library(vvas_airender SHARED src/vvas_airender.cpp)
 target_include_directories(vvas_airender PRIVATE ${GSTREAMER_INCLUDE_DIRS})
 target_link_libraries(vvas_airender 
@@ -43,8 +32,26 @@ target_link_libraries(vvas_airender
     opencv_core opencv_video opencv_videoio opencv_imgproc)
 install(TARGETS vvas_airender DESTINATION ${INSTALL_PATH}/lib)
 
+# --- vvas_text2overlay (MODIFIED FOR XRT) ---
 add_library(vvas_text2overlay SHARED src/vvas_text2overlay.cpp)
-target_include_directories(vvas_text2overlay PRIVATE ${GSTREAMER_INCLUDE_DIRS})
+
+# Add XRT and GStreamer include paths
+set(XRT_CORRECT_INCLUDE_DIR "${CMAKE_SYSROOT}/usr/include/xrt")
+
+target_include_directories(vvas_text2overlay PRIVATE 
+    ${GSTREAMER_INCLUDE_DIRS}
+    ${XRT_CORRECT_INCLUDE_DIR}
+)
+
+
+message(STATUS "--- Debugging XRT Paths ---")
+message(STATUS "CMAKE root: ${CMAKE_SYSROOT}")
+message(STATUS "XRT_INCLUDE: ${XRT_CORRECT_INCLUDE_DIR}")
+message(STATUS "XRT_INCLUDE: ${XRT_INCLUDE_DIRS}")
+message(STATUS "XRT_LIBRARIES:    ${XRT_LIBRARIES}")
+message(STATUS "-----------------------------------------")
+
+# Link XRT and other dependencies
 target_link_libraries(vvas_text2overlay
     gstreamer-1.0 
     glib-2.0 
@@ -52,10 +59,12 @@ target_link_libraries(vvas_text2overlay
     jansson 
     vvasutil-2.0 
     ${OpenCV_LIBS} 
+    ${XRT_LIBRARIES}     # Added XRT libraries here
     glog
 )
 install(TARGETS vvas_text2overlay DESTINATION ${INSTALL_PATH}/lib)
 
+# --- main executable ---
 add_executable(${CMAKE_PROJECT_NAME} src/main.cpp)
 target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE ${GSTREAMER_INCLUDE_DIRS})
 target_link_libraries(${CMAKE_PROJECT_NAME}

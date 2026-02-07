@@ -61,9 +61,12 @@ int main(int argc, char *argv[]) {
 
     /* Define the GRAY8 pipeline string */
     const char* pipeline_cmd = 
-        "videotestsrc name=vtestsrc ! "
-        "video/x-raw, width=1280, height=720, format=RGB ! "
-        "vvas_xfilter name=text2overlay kernels-config=\"/opt/xilinx/kv260-defect-detect/share/vvas/text2overlay.json\" ! "
+        "v4l2src device=/dev/video0 io-mode=mmap ! h264parse ! video/x-h264,alignment=au ! "
+        "queue ! omxh264dec low-latency=true ! "
+        "video/x-raw, width=1280, height=720, format=NV12 ! "
+        "queue name=source0 ! "
+        "vvas_xfilter name=text2overlay kernels-config=\"/opt/xilinx/kv260-smartcam/share/vvas/text2overlay.json\" ! "
+        "queue ! "
         "kmssink driver-name=xlnx plane-id=39 sync=false fullscreen-overlay=true";
 
     /* Print the pipeline for verification */
@@ -82,7 +85,7 @@ int main(int argc, char *argv[]) {
     }
 
     /* Get the pad and attach the metadata injector */
-    GstElement *vsrc = gst_bin_get_by_name(GST_BIN(pipeline), "vtestsrc");
+    GstElement *vsrc = gst_bin_get_by_name(GST_BIN(pipeline), "source0");
     GstPad *srcpad = gst_element_get_static_pad(vsrc, "src");
     gst_pad_add_probe(srcpad, GST_PAD_PROBE_TYPE_BUFFER, (GstPadProbeCallback)inject_metadata_probe, NULL, NULL);
 

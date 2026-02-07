@@ -18,6 +18,8 @@
 #include <opencv2/imgproc.hpp>
 #include <vvas/vvas_kernel.h>
 #include <gst/vvas/gstinferencemeta.h>
+#include <xrt/xrt_device.h>
+#include <xrt/xrt_bo.h>
 
 int log_level;
 using namespace cv;
@@ -162,9 +164,7 @@ extern "C"
 
     char *lumaBuf = (char *) frameinfo->inframe->vaddr[0];
 
-    // CV_8UC4 tells OpenCV to expect 3 bytes per pixel
-    frameinfo->lumaImg.create (input[0]->props.height, input[0]->props.stride / 3, CV_8UC3);
-    
+    frameinfo->lumaImg.create (input[0]->props.height, input[0]->props.stride, CV_8U);
     frameinfo->lumaImg.data = (unsigned char *) lumaBuf;
     GstInferenceMeta *infer_meta;
     infer_meta = ((GstInferenceMeta *) gst_buffer_get_meta((GstBuffer *)frameinfo->inframe->app_priv,
@@ -173,6 +173,7 @@ extern "C"
         LOG_MESSAGE(LOG_LEVEL_INFO, "vvas meta data is not available for crop");
         return FALSE;
     }
+
     uint32_t *mango_pixel, *defect_pixel;
     GstInferencePrediction *root = infer_meta->prediction;
     /* Iterate through the immediate child predictions */
@@ -193,23 +194,52 @@ extern "C"
         kpriv->total_defect++;
     }
 
-    LOG_MESSAGE (LOG_LEVEL_DEBUG, "Defect Dense: %.2lf %%", defect_density);
-    sprintf(text_buffer, "Defect Dense: %.2lf %%", defect_density);
+    LOG_MESSAGE (LOG_LEVEL_DEBUG, "Defect Density: %.2lf %%", defect_density);
+    sprintf(text_buffer, "Defect Density: %.2lf %%", defect_density);
     LOG_MESSAGE (LOG_LEVEL_DEBUG, "text buffer : %s", text_buffer);
-    // Scalar(Blue, Green, Red, Alpha) 
-    // This example draws Opaque White text
-    Scalar textColor = Scalar(0.0, 255.0, 255.0);
-    y_point = 0;
+
+
+
+
+    VVASFrame *vvas_frame = (VVASFrame *)frameinfo->inframe;
+
+    // 1. BEFORE putText: Pull data from FPGA to CPU
+    for (uint32_t i = 0; i < vvas_frame->n_planes; i++) {
+        if (vvas_frame->bo[i]) {
+            xrtBufferHandle bhdl = (xrtBufferHandle)vvas_frame->bo[i];
+            int ret = xrtBOSync(bhdl, XCL_BO_SYNC_BO_FROM_DEVICE, vvas_frame->size[i], 0);
+        }
+    }
+
+    /* Draw label text on the filled rectanngle */
+    putText(frameinfo->lumaImg, text_buffer, cv::Point(kpriv->x_offset, y_point), kpriv->font,
+            kpriv->font_size, Scalar (255.0, 255.0, 255.0), 1, 1);
+    y_point += 30;
     text_buffer[0] = '\0';
     LOG_MESSAGE (LOG_LEVEL_DEBUG, "Is Defected: %s", defect_decision ? "Yes": "No");
     sprintf(text_buffer, "Is Defected: %s", defect_decision ? "Yes": "No");
     LOG_MESSAGE (LOG_LEVEL_DEBUG, "text buffer : %s", text_buffer);
-    sprintf(text_buffer, "Accumulated defects: %u", kpriv->total_defect);
-    LOG_MESSAGE (LOG_LEVEL_DEBUG, "text buffer : %s", text_buffer);
-        /* Draw label text on the filled rectanngle */
-    putText(frameinfo->lumaImg, text_buffer, cv::Point(kpriv->x_offset, y_point), 
-            kpriv->font, kpriv->font_size, textColor, 1, 1);
+    printf("planes: %d\n", frameinfo->inframe->n_planes);
 
+    for (uint32_t i = 0; i < vvas_frame->n_planes; i++) {
+        if (vvas_frame->bo[i]) {
+            xrtBufferHandle bhdl = (xrtBufferHandle)vvas_frame->bo[i];
+            int ret = xrtBOSync(bhdl, XCL_BO_SYNC_BO_TO_DEVICE, vvas_frame->size[i], 0);
+        }
+    }
+
+    /* Draw label text on the filled rectanngle */
+    // putText(frameinfo->lumaImg, text_buffer, cv::Point(kpriv->x_offset, y_point), kpriv->font,
+    //         kpriv->font_size, Scalar (0.0, 255.0, 255.0), 1, 1);
+    // y_point += 30;
+    // if (kpriv->is_acc_result) {
+    //     LOG_MESSAGE (LOG_LEVEL_DEBUG, "Accumulated Defects: %u", kpriv->total_defect);
+    //     sprintf(text_buffer, "Accumulated defects: %u", kpriv->total_defect);
+    //     LOG_MESSAGE (LOG_LEVEL_DEBUG, "text buffer : %s", text_buffer);
+    //      /* Draw label text on the filled rectanngle */
+    //     putText(frameinfo->lumaImg, text_buffer, cv::Point(kpriv->x_offset, y_point), kpriv->font,
+    //             kpriv->font_size, Scalar (255.0, 255.0, 255.0), 1, 1);
+    // }
     g_slist_free(tmp);
 
     return 0;
