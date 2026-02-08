@@ -6,7 +6,7 @@
     "library-name": "libvvas_text2overlay.so",
     "config": {
       "debug_level": 1,
-      "font_size": 1.0,
+      "font_size": 10.0,
       "font": 3,
       "x_offset": 0,
       "y_offset": 50,
