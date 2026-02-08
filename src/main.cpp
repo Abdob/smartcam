@@ -1,5 +1,4 @@
 #include <gst/gst.h>
-#include <gst/vvas/gstinferencemeta.h>
 #include <stdlib.h>
 #include <time.h>
 #include <cstdio>
@@ -46,7 +45,6 @@ int main(int argc, char *argv[]) {
 
     /* Play */
     gst_element_set_state(pipeline, GST_STATE_PLAYING);
-    g_print("Simulation running. Text2Overlay is now consuming injected metadata.\n");
 
     bus = gst_element_get_bus(pipeline);
     msg = gst_bus_timed_pop_filtered(bus, GST_CLOCK_TIME_NONE, (GstMessageType)(GST_MESSAGE_ERROR | GST_MESSAGE_EOS));
