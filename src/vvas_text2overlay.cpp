@@ -165,9 +165,9 @@ extern "C"
     frameinfo->inframe = input[0];
 
     char *lumaBuf = (char *) frameinfo->inframe->vaddr[0];
-    //frameinfo->lumaImg.create (input[0]->props.height, input[0]->props.stride/4, CV_8UC4);
-    frameinfo->lumaImg = cv::Mat(height, width, CV_8UC4, lumaBuf, stride);
-    frameinfo->lumaImg.data = (unsigned char *) lumaBuf;
+    frameinfo->lumaImg.create (input[0]->props.height, input[0]->props.stride/4, CV_8UC4);
+    //frameinfo->lumaImg = cv::Mat(height, width, CV_8UC4, lumaBuf, stride);
+    //frameinfo->lumaImg.data = (unsigned char *) lumaBuf;
     GstInferenceMeta *infer_meta;
     infer_meta = ((GstInferenceMeta *) gst_buffer_get_meta((GstBuffer *)frameinfo->inframe->app_priv,
                                                                  gst_inference_meta_api_get_type()));
