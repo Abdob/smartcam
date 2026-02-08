@@ -1,19 +1,17 @@
 {
   "xclbin-location": "/lib/firmware/xilinx/nv122bgra/nv122bgra.xclbin",
   "vvas-library-repo": "/opt/xilinx/kv260-smartcam/lib",
-  "element-mode":"inplace",
-  "kernels" :[
-    {
-      "library-name":"libvvas_text2overlay.so",
-      "config": {
-        "debug_level" : 1,
-        "font_size" : 1.0,
-        "font" : 3,
-        "x_offset" : 0,
-        "y_offset" : 50,
-        "defect_threshold" : 0.14,
-        "is_acc_result" : 0
-      }
+  "element-mode": "inplace",
+  "kernel": {
+    "library-name": "libvvas_text2overlay.so",
+    "config": {
+      "debug_level": 1,
+      "font_size": 1.0,
+      "font": 3,
+      "x_offset": 0,
+      "y_offset": 50,
+      "defect_threshold": 0.14,
+      "is_acc_result": 0
     }
-  ]
+  }
 }

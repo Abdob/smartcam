@@ -19,7 +19,7 @@ gst-launch-1.0 videotestsrc num-buffers=300 ! \
 	queue ! \
     vvas_xfilter name=text2overlay kernels-config="/opt/xilinx/kv260-smartcam/share/vvas/text2overlay.json" ! \
     queue ! \
-	$DISPLAY2
+	$DISPLAY1
 
 #######################################################################################
 #scp -r $KV:/home/petalinux/bgr6 ~/Videos/
