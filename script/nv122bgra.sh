@@ -9,17 +9,17 @@ FILE="multifilesink location=$RUN/capture%04d.bgr"
 #######################################################################################
 #R_1920x1080 5 | R_1280x720 10 | R_800x600 24 | R_640x480 30
 mkdir -p $RUN
-Win=1920
-Hin=1080
-Wout=1920
-Hout=1080
+W=1920
+H=1080
 gst-launch-1.0 videotestsrc num-buffers=300 ! \
-	"video/x-raw, width=$Win, height=$Hin, format=NV12" ! \
+	"video/x-raw, width=$W, height=$H, format=NV12" ! \
 	queue ! \
 	vvas_xmultisrc kconfig="/opt/xilinx/kv260-smartcam/share/vvas/facedetect/nv122bgra.json" ! \
-	video/x-raw, width=$Wout, height=$Hout, format=RGBA ! \
+	video/x-raw, width=$W, height=$H, format=RGBA ! \
 	queue ! \
-	$DISPLAY1
+    vvas_xfilter name=text2overlay kernels-config="/opt/xilinx/kv260-smartcam/share/vvas/text2overlay.json" ! \
+    queue ! \
+	$DISPLAY2
 
 #######################################################################################
 #scp -r $KV:/home/petalinux/bgr6 ~/Videos/

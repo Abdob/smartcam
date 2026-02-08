@@ -79,6 +79,7 @@ extern "C"
 {
   int32_t xlnx_kernel_init (VVASKernel * handle)
   {
+    printf("init kernel\n");
     LOG_MESSAGE (LOG_LEVEL_DEBUG, "enter");
 
     vvas_xoverlaypriv *kpriv =
@@ -158,13 +159,14 @@ extern "C"
   uint32_t xlnx_kernel_start (VVASKernel * handle, int start,
       VVASFrame * input[MAX_NUM_OBJECT], VVASFrame * output[MAX_NUM_OBJECT])
   {
+    printf("stride: %d\n", input[0]->props.stride);
     vvas_xoverlaypriv *kpriv = (vvas_xoverlaypriv *) handle->kernel_priv;
     struct overlayframe_info *frameinfo = &(kpriv->frameinfo);
     frameinfo->inframe = input[0];
 
     char *lumaBuf = (char *) frameinfo->inframe->vaddr[0];
-
-    frameinfo->lumaImg.create (input[0]->props.height, input[0]->props.stride/3, CV_8UC3);
+    //frameinfo->lumaImg.create (input[0]->props.height, input[0]->props.stride/4, CV_8UC4);
+    frameinfo->lumaImg = cv::Mat(height, width, CV_8UC4, lumaBuf, stride);
     frameinfo->lumaImg.data = (unsigned char *) lumaBuf;
     GstInferenceMeta *infer_meta;
     infer_meta = ((GstInferenceMeta *) gst_buffer_get_meta((GstBuffer *)frameinfo->inframe->app_priv,

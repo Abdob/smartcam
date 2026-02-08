@@ -65,12 +65,13 @@ int main(int argc, char *argv[]) {
         "v4l2src device=/dev/video0 io-mode=mmap ! h264parse ! video/x-h264,alignment=au ! "
         "queue ! omxh264dec low-latency=true ! "
         "video/x-raw, width=1920, height=1080, format=NV12 ! "
+        "queue ! "
 	    "vvas_xmultisrc kconfig=\"/opt/xilinx/kv260-smartcam/share/vvas/facedetect/nv122bgra.json\" ! "
 	    "video/x-raw, width=1920, height=1080, format=RGBA ! "
         "queue name=source0 ! "
         "vvas_xfilter name=text2overlay kernels-config=\"/opt/xilinx/kv260-smartcam/share/vvas/text2overlay.json\" ! "
         "queue ! "
-        "kmssink driver-name=xlnx plane-id=39 sync=false fullscreen-overlay=true";
+        "kmssink bus-id=fd4a0000.display plane-id=40 sync=false can-scale=false";
 
     /* Print the pipeline for verification */
     printf("\n==================================================\n");
