@@ -1,1 +1,1 @@
-ssh -t $KVR "sudo xmutil unloadapp && sudo xmutil loadapp tutorial"
+ssh -t $KVR "sudo xmutil unloadapp && sudo xmutil loadapp tutorialfirmware"
