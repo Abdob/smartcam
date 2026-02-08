@@ -60,6 +60,7 @@ int main(int argc, char *argv[]) {
     srand(time(NULL));
 
     /* Define the GRAY8 pipeline string */
+    printf("this is an update from 2022.1\n");
     const char* pipeline_cmd = 
         "v4l2src device=/dev/video0 io-mode=mmap ! h264parse ! video/x-h264,alignment=au ! "
         "queue ! omxh264dec low-latency=true ! "
