@@ -20,14 +20,14 @@ SET(INSTALL_PATH "opt/xilinx/kv260-smartcam")
 # --- vvas_xpp ---
 add_library(vvas_xpp SHARED src/vvas_xpp_pipeline.c)
 target_include_directories(vvas_xpp PRIVATE ${GSTREAMER_INCLUDE_DIRS})
-target_link_libraries(vvas_xpp jansson vvasutil-2.0 gstvvasinfermeta-2.0)
+target_link_libraries(vvas_xpp jansson vvasutil-3.0 gstvvasinfermeta-3.0)
 install(TARGETS vvas_xpp DESTINATION ${INSTALL_PATH}/lib)
 
 # --- vvas_airender ---
 add_library(vvas_airender SHARED src/vvas_airender.cpp)
 target_include_directories(vvas_airender PRIVATE ${GSTREAMER_INCLUDE_DIRS})
 target_link_libraries(vvas_airender 
-    jansson vvasutil-2.0 gstvvasinfermeta-2.0 
+    jansson vvasutil-3.0 gstvvasinfermeta-3.0 
     gstreamer-1.0 gstbase-1.0 glib-2.0
     opencv_core opencv_video opencv_videoio opencv_imgproc)
 install(TARGETS vvas_airender DESTINATION ${INSTALL_PATH}/lib)
@@ -55,9 +55,9 @@ message(STATUS "-----------------------------------------")
 target_link_libraries(vvas_text2overlay
     gstreamer-1.0 
     glib-2.0 
-    gstvvasinfermeta-2.0 
+    gstvvasinfermeta-3.0 
     jansson 
-    vvasutil-2.0 
+    vvasutil-3.0 
     ${OpenCV_LIBS} 
     ${XRT_LIBRARIES}     # Added XRT libraries here
     glog
@@ -69,7 +69,7 @@ add_executable(${CMAKE_PROJECT_NAME} src/main.cpp)
 target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE ${GSTREAMER_INCLUDE_DIRS})
 target_link_libraries(${CMAKE_PROJECT_NAME}
   gstapp-1.0 gstreamer-1.0 gstbase-1.0 gobject-2.0 glib-2.0 gstvideo-1.0 gstallocators-1.0 gstrtsp-1.0 gstrtspserver-1.0
-  glib-2.0 gobject-2.0 gstvvasinfermeta-2.0 vvasutil-2.0)
+  glib-2.0 gobject-2.0 gstvvasinfermeta-3.0 vvasutil-3.0)
   
 install(TARGETS ${CMAKE_PROJECT_NAME} DESTINATION ${INSTALL_PATH}/bin)
 
