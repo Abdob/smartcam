@@ -85,7 +85,7 @@ int main(int argc, char *argv[]) {
         "queue name=data_injector ! " 
         "vvas_xfilter name=text2overlay kernels-config=\"/opt/xilinx/kv260-smartcam/share/vvas/text2overlay.json\" ! "
         "queue ! "
-        "kmssink bus-id=fd4a0000.display plane-id=40 sync=false can-scale=false";
+        "kmssink plane-id=41";
 
     /* Build the pipeline */
     pipeline = gst_parse_launch(pipeline_cmd, NULL);
