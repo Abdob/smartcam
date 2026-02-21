@@ -1,0 +1,12 @@
+{
+  "xclbin-location": "/lib/firmware/xilinx/colorconv/colorconv.xclbin",
+  "vvas-library-repo": "/opt/xilinx/kv260-smartcam/lib",
+  "element-mode": "transform",
+  "kernel": {
+    "kernel-name": "pp_nv122rgba_accel:{pp_nv122rgba_accel_1}",
+    "library-name": "libvvas_xpp.so",
+    "config": {
+      "debug_level": 1
+    }
+  }
+}

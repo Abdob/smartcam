@@ -23,6 +23,11 @@ target_include_directories(vvas_xpp PRIVATE ${GSTREAMER_INCLUDE_DIRS})
 target_link_libraries(vvas_xpp jansson vvasutil-3.0 gstvvasinfermeta-3.0)
 install(TARGETS vvas_xpp DESTINATION ${INSTALL_PATH}/lib)
 
+# --- vvas_xpp_reverse (New RGB to NV12) ---
+add_library(vvas_xpp_reverse SHARED src/vvas_xpp_reverse.c)
+target_include_directories(vvas_xpp_reverse PRIVATE ${GSTREAMER_INCLUDE_DIRS})
+target_link_libraries(vvas_xpp_reverse jansson vvasutil-3.0 gstvvasinfermeta-3.0)
+install(TARGETS vvas_xpp_reverse DESTINATION ${INSTALL_PATH}/lib)
 
 # --- vvas_text2overlay (MODIFIED FOR XRT) ---
 add_library(vvas_text2overlay SHARED src/vvas_text2overlay.cpp)
@@ -80,17 +85,10 @@ install(DIRECTORY
     config/facedetect
     config/refinedet
     config/ssd
+    script
     DESTINATION ${INSTALL_PATH}/share/vvas/)
 
-install(DIRECTORY
-    models/kv260/densebox_640_360
-	models/kv260/refinedet_pruned_0_96
-	models/kv260/ssd_adas_pruned_0_95
-    DESTINATION ${INSTALL_PATH}/share/vitis_ai_library/models/)
 
-install(DIRECTORY
-    notebook/
-    DESTINATION ${INSTALL_PATH}/share/notebooks/)
 
 set(VERSION "1.0.1")
 set(CPACK_PACKAGE_VERSION ${VERSION})
