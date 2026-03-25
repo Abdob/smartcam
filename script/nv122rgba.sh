@@ -14,6 +14,7 @@ gst-launch-1.0 v4l2src device=/dev/video2 io-mode=mmap num-buffers=1000 ! \
 	vvas_xmultisrc kconfig="/opt/xilinx/kv260-smartcam/share/vvas/facedetect/nv122rgba.json" ! \
     video/x-raw, width=$W, height=$H, format=RGBA ! \
 	queue ! \
+	glpassthrough operation-mode=1 ! \
 	$DISPLAY1
 
 #######################################################################################
