@@ -19,7 +19,7 @@ gst-launch-1.0 v4l2src device=/dev/video2 io-mode=mmap ! \
 	omxh264enc periodicity-idr=60 ! \
     webrtcsink \
     forward-metas="thz" \
-    enable-control-data-channel=false \
+    enable-control-data-channel=true \
     run-signalling-server=true \
     run-web-server=true \
     web-server-directory=/opt/gst-plugins-rs/net/webrtc/gstwebrtc-api/dist \
