@@ -3,7 +3,7 @@
   "vvas-library-repo": "/opt/xilinx/kv260-smartcam/lib",
   "element-mode": "transform",
   "kernel": {
-    "kernel-name": "pp_rgba2nv12_accel:{pp_nv122rgba_accel_1}",
+    "kernel-name": "pp_rgba2nv12_accel:{pp_rgba2nv12_accel_1}",
     "library-name": "libvvas_xpp_reverse.so",
     "config": {
       "debug_level": 1
