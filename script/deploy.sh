@@ -1,2 +1,2 @@
 SCRIPT=$1
-ssh $KV 'bash -s' < $SCRIPT
+ssh $KR 'bash -s' < $SCRIPT
