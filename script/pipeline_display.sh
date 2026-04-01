@@ -23,7 +23,9 @@ gst-launch-1.0 v4l2src device=/dev/video$CAM_DEVICE io-mode=mmap ! \
 	glpassthrough operation-mode=1 ! \
 	vvas_xmultisrc kconfig="/opt/xilinx/kv260-smartcam/share/vvas/facedetect/rgba2nv12.json" ! \
 	video/x-raw, width=$W, height=$H, format=NV12 ! \
-	$DISPLAY2
+	vvas_xmultisrc kconfig="/opt/xilinx/kv260-smartcam/share/vvas/facedetect/nv122rgba.json" ! \
+	video/x-raw, width=$W, height=$H, format=RGBA ! \
+	$DISPLAY1
 
 #######################################################################################
 #scp -r $KV:/home/petalinux/bgr6 ~/Videos/
