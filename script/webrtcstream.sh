@@ -19,13 +19,16 @@ gst-launch-1.0 v4l2src device=/dev/video$CAM_DEVICE io-mode=mmap ! \
 	"video/x-raw, width=$W, height=$H" ! \
 	vvas_xmultisrc kconfig="/opt/xilinx/kv260-smartcam/share/vvas/facedetect/nv122rgba.json" ! \
 	video/x-raw, width=$W, height=$H, format=RGBA ! \
+	thzmeta ! \
 	timeoverlay ! \
-	timecodestamper ! \
+	glpassthrough operation-mode=1 ! \
 	vvas_xmultisrc kconfig="/opt/xilinx/kv260-smartcam/share/vvas/facedetect/rgba2nv12.json" ! \
 	video/x-raw, width=$W, height=$H, format=NV12 ! \
-	omxh264enc periodicity-idr=60 target-bitrate=4000 ! \
+	omxh264enc periodicity-idr=270 target-bitrate=4000 \
+	control-rate=low-latency gop-length=60 qp-mode =1 \
+	initial-delay=100 cpb-size=200 min-qp=15 max-qp=40 b-frames=0 low-bandwidth=false ! \
 	webrtcsink \
-	forward-metas="timecode" \
+	forward-metas="thz" \
 	enable-control-data-channel=true \
 	run-signalling-server=true \
 	run-web-server=true \
