@@ -16,8 +16,7 @@ gst-launch-1.0 v4l2src device=/dev/video2 io-mode=mmap ! \
 	vvas_xmultisrc kconfig="/opt/xilinx/kv260-smartcam/share/vvas/facedetect/rgba2nv12.json" ! \
 	video/x-raw, width=$W, height=$H, format=NV12 ! \
 	thzmeta ! \
-	timeoverlay ! \
-	omxh264enc periodicity-idr=60 target-bitrate=4000 control-rate=low-latency gop-length=30 ! \
+	omxh264enc periodicity-idr=60 target-bitrate=4000 ! \
 	webrtcsink \
 	forward-metas="thz" \
 	enable-control-data-channel=true \
